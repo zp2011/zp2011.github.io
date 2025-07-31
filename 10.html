@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub 论坛 - 拟物化设计</title>
+    <style>
+        :root {
+            --primary-color: #007AFF;
+            --secondary-color: #34C759;
+            --background-color: #F2F2F7;
+            --card-color: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --text-primary: #1C1C1E;
+            --text-secondary: #636366;
+            --border-radius: 14px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .post-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .post-content {
+            margin: 15px 0;
+            color: var(--text-primary);
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        .button:active {
+            transform: scale(0.96);
+        }
+
+        .button-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .like-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .like-button.liked {
+            color: var(--secondary-color);
+        }
+
+        .comment-section {
+            margin-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 15px;
+        }
+
+        .comment {
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .comment-content {
+            font-size: 14px;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tab-bar {
+            display: flex;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .tab.active {
+            background-color: rgba(0, 122, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GitHub 论坛</h1>
+            <button class="button button-primary" id="new-post-btn">新帖子</button>
+        </header>
+
+        <div class="tab-bar">
+            <div class="tab active" data-tab="all">全部</div>
+            <div class="tab" data-tab="popular">热门</div>
+            <div class="tab" data-tab="mine">我的</div>
+        </div>
+
+        <div id="posts-container">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="post-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">创建新帖子</h2>
+            <div class="form-group">
+                <label for="post-title">标题</label>
+                <input type="text" id="post-title" placeholder="输入标题">
+            </div>
+            <div class="form-group">
+                <label for="post-content">内容</label>
+                <textarea id="post-content" placeholder="输入内容"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="button button-outline" id="cancel-post">取消</button>
+                <button class="button button-primary" id="submit-post">发布</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="comment-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">添加评论</h2>
+            <div class="form-group">
+                <label for="comment-author">你的名字</label>
+                <input type="text" id="comment-author" placeholder="输入你的名字">
+            </div>
+            <div class="form-group">
+                <label for="comment-content">评论内容</label>
+                <textarea id="comment-content" placeholder="输入评论内容"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="button button-outline" id="cancel-comment">取消</button>
+                <button class="button button-primary" id="submit-comment">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置信息 - 在实际使用中应该更安全地存储这些信息
+        const config = {
+            githubToken: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 'ghp_your_github_token_here', // 替换为你的GitHub个人访问令牌
+            githubUser:zp2011 'your_github_username',        // 替换为你的GitHub用户名
+            repo:zp2011.github.io 'forum-data',                       // 存储论坛数据的仓库名
+            branch:main 'main'                           // 使用的分支
+        };
+
+        // 状态管理
+        let state = {
+            posts: [],
+            currentTab: 'all',
+            currentPostId: null,
+            userLikes: JSON.parse(localStorage.getItem('userLikes')) || {}
+        };
+
+        // DOM元素
+        const elements = {
+            postsContainer: document.getElementById('posts-container'),
+            newPostBtn: document.getElementById('new-post-btn'),
+            postModal: document.getElementById('post-modal'),
+            postTitle: document.getElementById('post-title'),
+            postContent: document.getElementById('post-content'),
+            cancelPost: document.getElementById('cancel-post'),
+            submitPost: document.getElementById('submit-post'),
+            commentModal: document.getElementById('comment-modal'),
+            commentAuthor: document.getElementById('comment-author'),
+            commentContent: document.getElementById('comment-content'),
+            cancelComment: document.getElementById('cancel-comment'),
+            submitComment: document.getElementById('submit-comment'),
+            tabs: document.querySelectorAll('.tab')
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchPosts();
+            setupEventListeners();
+        });
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            elements.newPostBtn.addEventListener('click', () => {
+                elements.postTitle.value = '';
+                elements.postContent.value = '';
+                elements.postModal.style.display = 'flex';
+            });
+
+            elements.cancelPost.addEventListener('click', () => {
+                elements.postModal.style.display = 'none';
+            });
+
+            elements.submitPost.addEventListener('click', createPost);
+
+            elements.cancelComment.addEventListener('click', () => {
+                elements.commentModal.style.display = 'none';
+            });
+
+            elements.submitComment.addEventListener('click', addComment);
+
+            elements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    elements.tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    state.currentTab = tab.dataset.tab;
+                    renderPosts();
+                });
+            });
+        }
+
+        // 从GitHub获取帖子
+        async function fetchPosts() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${config.githubUser}/${config.repo}/contents/posts.json?ref=${config.branch}`, {
+                    headers: {
+                        'Authorization': `token ${config.githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        // 文件不存在，创建一个空数组
+                        state.posts = [];
+                        renderPosts();
+                        return;
+                    }
+                    throw new Error('Failed to fetch posts');
+                }
+
+                const data = await response.json();
+                const content = atob(data.content);
+                state.posts = JSON.parse(content);
+                renderPosts();
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                elements.postsContainer.innerHTML = `
+                    <div class="card">
+                        <p>无法加载帖子。请检查控制台获取更多信息。</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 渲染帖子列表
+        function renderPosts() {
+            if (state.posts.length === 0) {
+                elements.postsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>还没有帖子，点击"新帖子"按钮创建第一个帖子吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let filteredPosts = [...state.posts];
+
+            // 根据当前标签过滤帖子
+            if (state.currentTab === 'popular') {
+                filteredPosts.sort((a, b) => b.likes - a.likes);
+            } else if (state.currentTab === 'mine') {
+                // 这里简化处理，实际应用中应该根据登录用户过滤
+                filteredPosts = filteredPosts.filter(post => post.author === 'You');
+            }
+
+            elements.postsContainer.innerHTML = filteredPosts.map(post => `
+                <div class="card" data-post-id="${post.id}">
+                    <h3 class="post-title">${post.title}</h3>
+                    <div class="post-meta">
+                        <span>作者: ${post.author}</span>
+                        <span>${new Date(post.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-actions">
+                        <button class="like-button ${state.userLikes[post.id] ? 'liked' : ''}" data-post-id="${post.id}">
+                            ❤️ ${post.likes}
+                        </button>
+                        <button class="button button-outline comment-btn" data-post-id="${post.id}">评论</button>
+                    </div>
+                    ${post.comments && post.comments.length > 0 ? `
+                        <div class="comment-section">
+                            <h4>评论 (${post.comments.length})</h4>
+                            ${post.comments.slice(0, 3).map(comment => `
+                                <div class="comment">
+                                    <div class="comment-author">${comment.author}</div>
+                                    <div class="comment-content">${comment.content}</div>
+                                </div>
+                            `).join('')}
+                            ${post.comments.length > 3 ? `<p>还有 ${post.comments.length - 3} 条评论...</p>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            // 添加点赞按钮事件
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const postId = e.currentTarget.dataset.postId;
+                    toggleLike(postId);
+                });
+            });
+
+            // 添加评论按钮事件
+            document.querySelectorAll('.comment-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    state.currentPostId = e.currentTarget.dataset.postId;
+                    elements.commentAuthor.value = '';
+                    elements.commentContent.value = '';
+                    elements.commentModal.style.display = 'flex';
+                });
+            });
+        }
+
+        // 创建新帖子
+        async function createPost() {
+            const title = elements.postTitle.value.trim();
+            const content = elements.postContent.value.trim();
+
+            if (!title || !content) {
+                alert('标题和内容不能为空');
+                return;
+            }
+
+            elements.submitPost.disabled = true;
+            elements.submitPost.textContent = '发布中...';
+
+            const newPost = {
+                id: Date.now().toString(),
+                title,
+                content,
+                author: 'You', // 简化处理，实际应用中应该有用户系统
+                timestamp: new Date().toISOString(),
+                likes: 0,
+                comments: []
+            };
+
+            const updatedPosts = [newPost, ...state.posts];
+
+            try {
+                await updatePostsFile(updatedPosts);
+                state.posts = updatedPosts;
+                renderPosts();
+                elements.postModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('发布失败，请重试');
+            } finally {
+                elements.submitPost.disabled = false;
+                elements.submitPost.textContent = '发布';
+            }
+        }
+
+        // 添加评论
+        async function addComment() {
+            const author = elements.commentAuthor.value.trim();
+            const content = elements.commentContent.value.trim();
+
+            if (!author || !content) {
+                alert('名字和评论内容不能为空');
+                return;
+            }
+
+            elements.submitComment.disabled = true;
+            elements.submitComment.textContent = '提交中...';
+
+            const postId = state.currentPostId;
+            const postIndex = state.posts.findIndex(post => post.id === postId);
+
+            if (postIndex === -1) {
+                alert('帖子不存在');
+                return;
+            }
+
+            const newComment = {
+                author,
+                content,
+                timestamp: new Date().toISOString()
+            };
+
+            const updatedPosts = [...state.posts];
+            updatedPosts[postIndex].comments = [...(updatedPosts[postIndex].comments || []), newComment];
+
+            try {
+                await updatePostsFile(updatedPosts);
+                state.posts = updatedPosts;
+                renderPosts();
+                elements.commentModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('添加评论失败，请重试');
+            } finally {
+                elements.submitComment.disabled = false;
+                elements.submitComment.textContent = '提交';
+            }
+        }
+
+        // 点赞/取消点赞
+        async function toggleLike(postId) {
+            const postIndex = state.posts.findIndex(post => post.id === postId);
+
+            if (postIndex === -1) return;
+
+            const updatedPosts = [...state.posts];
+            const isLiked = state.userLikes[postId];
+
+            if (isLiked) {
+                updatedPosts[postIndex].likes -= 1;
+                delete state.userLikes[postId];
+            } else {
+                updatedPosts[postIndex].likes += 1;
+                state.userLikes[postId] = true;
+            }
+
+            localStorage.setItem('userLikes', JSON.stringify(state.userLikes));
+
+            try {
+                await updatePostsFile(updatedPosts);
+                state.posts = updatedPosts;
+                renderPosts();
+            } catch (error) {
+                console.error('Error updating likes:', error);
+                // 回滚状态
+                if (isLiked) {
+                    updatedPosts[postIndex].likes += 1;
+                    state.userLikes[postId] = true;
+                } else {
+                    updatedPosts[postIndex].likes -= 1;
+                    delete state.userLikes[postId];
+                }
+                localStorage.setItem('userLikes', JSON.stringify(state.userLikes));
+                renderPosts();
+                alert('操作失败，请重试');
+            }
+        }
+
+        // 更新GitHub上的posts.json文件
+        async function updatePostsFile(updatedPosts) {
+            // 首先获取文件的SHA，以便更新
+            const getResponse = await fetch(`https://api.github.com/repos/${config.githubUser}/${config.repo}/contents/posts.json?ref=${config.branch}`, {
+                headers: {
+                    'Authorization': `token ${config.githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            let sha = null;
+            if (getResponse.ok) {
+                const data = await getResponse.json();
+                sha = data.sha;
+            }
+
+            // 更新文件
+            const content = JSON.stringify(updatedPosts, null, 2);
+            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+
+            const response = await fetch(`https://api.github.com/repos/${config.githubUser}/${config.repo}/contents/posts.json`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${config.githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update forum posts',
+                    content: contentBase64,
+                    sha: sha,
+                    branch: config.branch
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update posts');
+            }
+        }
+    </script>
+</body>
+</html>
