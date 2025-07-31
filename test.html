@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub论坛 - 技术交流</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">GitHub论坛</div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#">热门</a></li>
+                    <li><a href="#">分类</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <a href="#" class="login-btn" id="loginBtn">登录</a>
+                <a href="#" class="register-btn" id="registerBtn">注册</a>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">
+                    <span id="avatarText">U</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="forum-header">
+                <h1>技术交流区</h1>
+                <button id="newPostBtn" class="new-post-btn">发表新帖</button>
+            </div>
+            
+            <div class="posts" id="postsContainer">
+                <!-- 帖子将通过JavaScript动态加载 -->
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 发表新帖模态框 -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>创建新讨论</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="postTitle">标题</label>
+                    <input type="text" id="postTitle" placeholder="用一句话概括你的话题" required>
+                    <div class="error-message">标题不能为空</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postCategory">分类</label>
+                    <select id="postCategory" required>
+                        <option value="">选择最适合的分类</option>
+                        <option value="前端开发">前端开发</option>
+                        <option value="后端开发">后端开发</option>
+                        <option value="人工智能">人工智能</option>
+                        <option value="数据科学">数据科学</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <div class="error-message">请选择分类</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postContent">内容</label>
+                    <textarea id="postContent" placeholder="详细阐述你的观点或问题（支持Markdown格式）" required></textarea>
+                    <div class="error-message">内容不能为空</div>
+                </div>
+                
+                <button type="submit" class="submit-btn">发布讨论</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>登录论坛</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">GitHub用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入GitHub用户名" required>
+                    <div class="error-message">用户名不能为空</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">GitHub访问令牌</label>
+                    <input type="password" id="loginToken" placeholder="请输入GitHub个人访问令牌" required>
+                    <div class="error-message">令牌不能为空</div>
+                    <small>令牌需要repo和discussions权限</small>
+                </div>
+                
+                <button type="submit" class="submit-btn">登录</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 GitHub论坛 | 使用GitHub Issues和Discussions构建</p>
+        </div>
+    </footer>
+    
+    <script src="scripts/main.js"></script>
+</body>
+</html>
