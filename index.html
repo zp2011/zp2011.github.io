@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V论坛 - 科技论坛</title>
+    <style>
+        :root {
+            --primary-color: rgba(0, 122, 255, 0.8);
+            --secondary-color: rgba(52, 199, 89, 0.8);
+            --accent-color: rgba(255, 59, 48, 0.8);
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --glass-color: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --blur-amount: 20px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+            background: var(--glass-color);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .card {
+            background: var(--glass-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:active {
+            transform: scale(0.98) translateY(0);
+            transition: transform 0.1s ease;
+        }
+
+        .post-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .post-content {
+            margin: 15px 0;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .button:hover::before {
+            opacity: 1;
+        }
+
+        .button:active {
+            transform: scale(0.95) translateY(0);
+            transition: transform 0.1s ease;
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .button-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .button-accent {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .button-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .like-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .like-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .like-button.liked {
+            color: var(--secondary-color);
+            background: rgba(52, 199, 89, 0.1);
+        }
+
+        .comment-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 15px;
+        }
+
+        .comment {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .comment:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .comment-author {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .comment-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .comment-input input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid var(--glass-border);
+            transform: scale(0.9);
+            opacity: 0;
+            animation: modalOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes modalOpen {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .loading p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tab-bar {
+            display: flex;
+            background: var(--glass-color);
+            border-radius: var(--border-radius);
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px var(--glass-shadow);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: rgba(0, 122, 255, 0.2);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            background: var(--glass-color);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid var(--glass-border);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .news-ticker {
+            background: var(--glass-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            overflow: hidden;
+        }
+
+        .news-ticker h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .news-ticker ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news-ticker li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .news-ticker li:last-child {
+            border-bottom: none;
+        }
+
+        .news-ticker li:hover {
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        .news-ticker li::before {
+            content: "•";
+            color: var(--primary-color);
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .notice-modal-content {
+            text-align: center;
+        }
+
+        .notice-modal-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .qq-group {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+
+        .external-badge {
+            background: rgba(255, 59, 48, 0.2);
+            color: var(--accent-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .external-badge::before {
+            content: "🔗";
+        }
+
+        .refresh-button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* 新增样式 */
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+            object-fit: cover;
+            border: 2px solid var(--glass-border);
+        }
+        
+        .author-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--glass-border);
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .post-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .button {
+                width: 100%;
+            }
+            
+            .tab-bar {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .tab {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>V论坛</h1>
+            <button class="button button-primary" id="new-post-btn">新帖子</button>
+        </header>
+
+        <div class="news-ticker">
+            <h3>科技新闻速递</h3>
+            <ul>
+                <li>苹果发布Vision Pro，开启空间计算新时代</li>
+                <li>OpenAI推出GPT-4o模型，实现多模态交互</li>
+                <li>量子计算机突破1000量子比特大关</li>
+                <li>特斯拉发布Optimus Gen 2人形机器人</li>
+                <li>NASA计划2025年重返月球</li>
+            </ul>
+        </div>
+
+        <div class="tab-bar">
+            <div class="tab active" data-tab="all">全部</div>
+            <div class="tab" data-tab="popular">热门</div>
+            <div class="tab" data-tab="mine">我的</div>
+        </div>
+
+        <div id="posts-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发布提示模态框 -->
+    <div class="modal" id="notice-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">发布须知</h2>
+            <div class="notice-modal-content">
+                <p>请在QQ群中发布帖子或评论，由管理员进行审核</p>
+                <p>QQ群号：<span class="qq-group">853141903</span></p>
+            </div>
+            <div class="modal-actions">
+                <button class="button button-primary" id="close-notice">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 状态管理
+        let state = {
+            posts: [],
+            externalPosts: [],
+            currentTab: 'all',
+            currentPostId: null,
+            userLikes: JSON.parse(localStorage.getItem('userLikes')) || {},
+            isLoading: false,
+            currentUser: {
+                isGuest: true,
+                name: '游客' + Math.floor(Math.random() * 10000),
+                avatar: getRandomAvatar(),
+                posts: []
+            }
+        };
+
+        // 随机头像函数
+        function getRandomAvatar() {
+            const avatars = [
+                'https://api.dicebear.com/7.x/adventurer/svg?seed=' + Math.random(),
+                'https://api.dicebear.com/7.x/big-ears/svg?seed=' + Math.random(),
+                'https://api.dicebear.com/7.x/big-smile/svg?seed=' + Math.random(),
+                'https://api.dicebear.com/7.x/identicon/svg?seed=' + Math.random(),
+                'https://api.dicebear.com/7.x/pixel-art/svg?seed=' + Math.random()
+            ];
+            return avatars[Math.floor(Math.random() * avatars.length)];
+        }
+
+        // DOM元素
+        const elements = {
+            postsContainer: document.getElementById('posts-container'),
+            newPostBtn: document.getElementById('new-post-btn'),
+            noticeModal: document.getElementById('notice-modal'),
+            closeNotice: document.getElementById('close-notice'),
+            tabs: document.querySelectorAll('.tab')
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            generateSamplePosts();
+            setupEventListeners();
+            animateButtons();
+        });
+
+        // 生成示例帖子
+        function generateSamplePosts() {
+            const samplePosts = [
+                {
+                    id: '1',
+                    title: 'VMOS虚拟机使用教程 - 完整指南',
+                    content: 'VMOS是一款强大的Android虚拟机应用，可以在主系统中运行另一个完整的Android系统。本教程将介绍如何安装、配置和使用VMOS，包括如何导入应用、设置网络和优化性能。',
+                    author: '技术达人',
+                    authorAvatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=tech',
+                    timestamp: new Date(Date.now() - 86400000).toISOString(),
+                    likes: 24,
+                    comments: [
+                        {
+                            author: '小白用户',
+                            authorAvatar: 'https://api.dicebear.com/7.x/big-smile/svg?seed=beginner',
+                            content: '非常感谢，教程非常详细！',
+                            timestamp: new Date(Date.now() - 43200000).toISOString()
+                        },
+                        {
+                            author: '资深玩家',
+                            authorAvatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=expert',
+                            content: '建议添加关于Root权限的部分',
+                            timestamp: new Date(Date.now() - 21600000).toISOString()
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    title: 'Termux高级技巧 - 让手机变成开发工具',
+                    content: 'Termux是一个强大的终端模拟器和Linux环境，可以直接在Android上运行。本文将分享一些高级技巧，包括如何安装Python、Node.js，以及如何使用SSH远程连接。',
+                    author: '开发者',
+                    authorAvatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=developer',
+                    timestamp: new Date(Date.now() - 172800000).toISOString(),
+                    likes: 18,
+                    comments: [
+                        {
+                            author: '编程爱好者',
+                            authorAvatar: 'https://api.dicebear.com/7.x/big-smile/svg?seed=coder',
+                            content: 'Node.js安装部分帮了大忙！',
+                            timestamp: new Date(Date.now() - 86400000).toISOString()
+                        }
+                    ]
+                },
+                {
+                    id: '3',
+                    title: 'VMOS和Termux结合使用的可能性',
+                    content: '有没有人尝试过在VMOS中运行Termux？这样可以在虚拟环境中拥有一个完整的Linux环境，而不会影响主系统。我正在测试这种组合的性能和稳定性。',
+                    author: '实验者',
+                    authorAvatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=experimenter',
+                    timestamp: new Date(Date.now() - 259200000).toISOString(),
+                    likes: 12,
+                    comments: []
+                },
+                {
+                    id: '4',
+                    title: 'Termux中安装Kali Linux工具包',
+                    content: '分享如何在Termux中安装Kali Linux的工具包，包括nmap、metasploit等安全工具。注意：这些工具仅用于合法安全测试目的。',
+                    author: '安全研究员',
+                    authorAvatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=security',
+                    timestamp: new Date(Date.now() - 345600000).toISOString(),
+                    likes: 30,
+                    comments: [
+                        {
+                            author: '网络安全新手',
+                            authorAvatar: 'https://api.dicebear.com/7.x/big-ears/svg?seed=newbie',
+                            content: 'metasploit安装失败，求帮助',
+                            timestamp: new Date(Date.now() - 172800000).toISOString()
+                        },
+                        {
+                            author: '安全专家',
+                            authorAvatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=expert2',
+                            content: '需要先安装proot-distro',
+                            timestamp: new Date(Date.now() - 86400000).toISOString()
+                        }
+                    ]
+                },
+                {
+                    id: '5',
+                    title: 'VMOS性能优化指南',
+                    content: 'VMOS在低端设备上可能会运行缓慢。本文分享一些优化技巧，包括调整虚拟机内存、关闭不必要的服务和启用硬件加速等。',
+                    author: '优化大师',
+                    authorAvatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=optimizer',
+                    timestamp: new Date(Date.now() - 432000000).toISOString(),
+                    likes: 15,
+                    comments: [
+                        {
+                            author: '手机用户',
+                            authorAvatar: 'https://api.dicebear.com/7.x/big-smile/svg?seed=user',
+                            content: '内存调整后确实流畅多了',
+                            timestamp: new Date(Date.now() - 216000000).toISOString()
+                        }
+                    ]
+                }
+            ];
+
+            // 添加游客帖子
+            const guestPost = {
+                id: 'guest-' + Date.now(),
+                title: '我是新来的游客，请多关照！',
+                content: '刚刚发现这个论坛，看起来有很多有用的技术内容。我会经常来看看，希望能学到新知识！',
+                author: state.currentUser.name,
+                authorAvatar: state.currentUser.avatar,
+                timestamp: new Date().toISOString(),
+                likes: 2,
+                comments: []
+            };
+
+            state.currentUser.posts.push(guestPost);
+            state.posts = [...samplePosts, guestPost];
+            renderPosts();
+        }
+
+        // 从外部API获取科技新闻
+        async function fetchExternalTechNews() {
+            if (state.isLoading) return;
+            
+            state.isLoading = true;
+            elements.postsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>正在加载热门科技新闻...</p>
+                </div>
+            `;
+            
+            try {
+                const mockExternalNews = await mockFetchTechNews();
+                state.externalPosts = mockExternalNews;
+                renderPosts();
+            } catch (error) {
+                console.error('获取科技新闻失败:', error);
+                elements.postsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>加载科技新闻失败</p>
+                        <button class="button button-accent" id="retry-fetch">重试</button>
+                    </div>
+                `;
+                
+                document.getElementById('retry-fetch')?.addEventListener('click', fetchExternalTechNews);
+            } finally {
+                state.isLoading = false;
+            }
+        }
+
+        // 模拟API获取科技新闻
+        async function mockFetchTechNews() {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            return [
+                {
+                    id: 'ext1-' + Date.now(),
+                    title: '微软发布Windows 12预览版 - AI功能全面升级',
+                    content: '微软今日发布了Windows 12的开发者预览版，新系统深度整合AI功能，包括智能助手Copilot的全面升级、AI驱动的文件搜索和上下文感知的工作流优化。',
+                    source: '科技新闻网',
+                    url: 'https://example.com/news/1',
+                    timestamp: new Date(Date.now() - 3600000).toISOString(),
+                    likes: 45,
+                    isExternal: true
+                },
+                {
+                    id: 'ext2-' + Date.now(),
+                    title: '谷歌Gemini 2.0发布 - 多模态能力大幅提升',
+                    content: '谷歌宣布推出Gemini 2.0 AI模型，在多语言理解、代码生成和图像分析方面有显著提升。新模型支持128K上下文窗口，处理长文档能力更强。',
+                    source: 'AI科技前沿',
+                    url: 'https://example.com/news/2',
+                    timestamp: new Date(Date.now() - 7200000).toISOString(),
+                    likes: 38,
+                    isExternal: true
+                },
+                {
+                    id: 'ext3-' + Date.now(),
+                    title: 'SpaceX星舰完成第三次轨道试飞',
+                    content: 'SpaceX的星舰火箭成功完成第三次轨道级试飞，实现了多项关键测试目标，包括有效载荷舱门开启测试和在轨推进剂转移演示。',
+                    source: '航天科技日报',
+                    url: 'https://example.com/news/3',
+                    timestamp: new Date(Date.now() - 10800000).toISOString(),
+                    likes: 52,
+                    isExternal: true
+                },
+                {
+                    id: 'ext4-' + Date.now(),
+                    title: '苹果Vision Pro开发者套件开始发货',
+                    content: '苹果已开始向开发者发送Vision Pro开发套件，包含专门优化的开发工具和文档，帮助开发者为其空间计算平台创建应用。',
+                    source: '开发者周刊',
+                    url: 'https://example.com/news/4',
+                    timestamp: new Date(Date.now() - 14400000).toISOString(),
+                    likes: 29,
+                    isExternal: true
+                },
+                {
+                    id: 'ext5-' + Date.now(),
+                    title: '量子计算机实现100量子比特纠缠',
+                    content: 'IBM和谷歌的研究团队分别宣布在量子计算领域取得突破，成功实现100+量子比特的纠缠态，为量子优势的实用化迈出重要一步。',
+                    source: '量子科技观察',
+                    url: 'https://example.com/news/5',
+                    timestamp: new Date(Date.now() - 18000000).toISOString(),
+                    likes: 41,
+                    isExternal: true
+                }
+            ];
+        }
+
+        // 按钮淡入动画
+        function animateButtons() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach((button, index) => {
+                button.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            elements.newPostBtn.addEventListener('click', () => {
+                elements.noticeModal.style.display = 'flex';
+            });
+
+            elements.closeNotice.addEventListener('click', () => {
+                animateModalClose(elements.noticeModal);
+            });
+
+            elements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    elements.tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    state.currentTab = tab.dataset.tab;
+                    
+                    if (state.currentTab === 'popular' && state.externalPosts.length === 0) {
+                        fetchExternalTechNews();
+                    } else {
+                        renderPosts();
+                    }
+                });
+            });
+        }
+
+        // 模态框关闭动画
+        function animateModalClose(modal) {
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.style.animation = 'modalClose 0.3s ease forwards';
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modalContent.style.animation = '';
+            }, 300);
+        }
+
+        // 渲染帖子列表
+        function renderPosts() {
+            if (state.currentTab === 'popular') {
+                renderExternalPosts();
+            } else {
+                renderInternalPosts();
+            }
+        }
+
+        // 渲染外部科技新闻
+        function renderExternalPosts() {
+            if (state.externalPosts.length === 0) {
+                elements.postsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🌐</div>
+                        <p>暂无科技新闻数据</p>
+                        <button class="button button-primary" id="refresh-news">刷新</button>
+                    </div>
+                `;
+                
+                document.getElementById('refresh-news')?.addEventListener('click', fetchExternalTechNews);
+                return;
+            }
+
+            elements.postsContainer.innerHTML = `
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                    <button class="refresh-button" id="refresh-external">
+                        <span>刷新</span>
+                        <span>🔄</span>
+                    </button>
+                </div>
+                ${state.externalPosts.map(post => `
+                    <div class="card" data-post-id="${post.id}">
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-meta">
+                            <span>来源: ${post.source} <span class="external-badge">外部</span></span>
+                            <span>${new Date(post.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-actions">
+                            <button class="like-button ${state.userLikes[post.id] ? 'liked' : ''}" data-post-id="${post.id}">
+                                ❤️ ${post.likes}
+                            </button>
+                            <a href="${post.url}" target="_blank" class="button button-outline">
+                                阅读原文
+                            </a>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const postId = e.currentTarget.dataset.postId;
+                    toggleLike(postId, true);
+                });
+            });
+
+            document.getElementById('refresh-external')?.addEventListener('click', fetchExternalTechNews);
+        }
+
+        // 渲染内部帖子
+        function renderInternalPosts() {
+            if (state.currentTab === 'mine') {
+                renderMyPosts();
+                return;
+            }
+
+            if (state.posts.length === 0) {
+                elements.postsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>还没有帖子，点击"新帖子"按钮创建第一个帖子吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            elements.postsContainer.innerHTML = state.posts.map(post => `
+                <div class="card" data-post-id="${post.id}">
+                    <h3 class="post-title">${post.title}</h3>
+                    <div class="post-meta">
+                        <div class="author-info">
+                            <img src="${post.authorAvatar}" class="avatar">
+                            <span>${post.author}</span>
+                        </div>
+                        <span>${new Date(post.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-actions">
+                        <button class="like-button ${state.userLikes[post.id] ? 'liked' : ''}" data-post-id="${post.id}">
+                            ❤️ ${post.likes}
+                        </button>
+                        <button class="button button-outline comment-btn" data-post-id="${post.id}">评论</button>
+                    </div>
+                    ${post.comments && post.comments.length > 0 ? `
+                        <div class="comment-section">
+                            <h4>评论 (${post.comments.length})</h4>
+                            ${post.comments.slice(0, 3).map(comment => `
+                                <div class="comment">
+                                    <div class="comment-author">
+                                        <img src="${comment.authorAvatar}" class="avatar" style="width: 24px; height: 24px;">
+                                        ${comment.author}
+                                    </div>
+                                    <div class="comment-content">${comment.content}</div>
+                                </div>
+                            `).join('')}
+                            ${post.comments.length > 3 ? `<p>还有 ${post.comments.length - 3} 条评论...</p>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            setupPostEventListeners();
+        }
+
+        // 渲染"我的"帖子
+        function renderMyPosts() {
+            if (state.currentUser.posts.length === 0) {
+                elements.postsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <div class="user-profile">
+                            <img src="${state.currentUser.avatar}" class="user-avatar">
+                            <div>
+                                <div class="user-name">${state.currentUser.name}</div>
+                                <div style="color: var(--text-secondary); font-size: 14px;">游客账户</div>
+                            </div>
+                        </div>
+                        <p>您还没有发布过帖子</p>
+                        <button class="button button-primary" id="new-post-btn">发布第一个帖子</button>
+                    </div>
+                `;
+                return;
+            }
+
+            elements.postsContainer.innerHTML = `
+                <div class="user-profile" style="margin-bottom: 20px;">
+                    <img src="${state.currentUser.avatar}" class="user-avatar">
+                    <div>
+                        <div class="user-name">${state.currentUser.name}</div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">游客账户</div>
+                    </div>
+                </div>
+                ${state.currentUser.posts.map(post => `
+                    <div class="card" data-post-id="${post.id}">
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-meta">
+                            <span>${new Date(post.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-actions">
+                            <button class="like-button ${state.userLikes[post.id] ? 'liked' : ''}" data-post-id="${post.id}">
+                                ❤️ ${post.likes}
+                            </button>
+                            <button class="button button-outline comment-btn" data-post-id="${post.id}">评论</button>
+                        </div>
+                        ${post.comments && post.comments.length > 0 ? `
+                            <div class="comment-section">
+                                <h4>评论 (${post.comments.length})</h4>
+                                ${post.comments.slice(0, 3).map(comment => `
+                                    <div class="comment">
+                                        <div class="comment-author">
+                                            <img src="${comment.authorAvatar}" class="avatar" style="width: 24px; height: 24px;">
+                                            ${comment.author}
+                                        </div>
+                                        <div class="comment-content">${comment.content}</div>
+                                    </div>
+                                `).join('')}
+                                ${post.comments.length > 3 ? `<p>还有 ${post.comments.length - 3} 条评论...</p>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            `;
+
+            setupPostEventListeners();
+        }
+
+        // 设置帖子事件监听
+        function setupPostEventListeners() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const postId = e.currentTarget.dataset.postId;
+                    toggleLike(postId, false);
+                });
+            });
+
+            document.querySelectorAll('.comment-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    elements.noticeModal.style.display = 'flex';
+                });
+            });
+        }
+
+        // 点赞/取消点赞
+        function toggleLike(postId, isExternal) {
+            const postArray = isExternal ? state.externalPosts : 
+                              state.currentTab === 'mine' ? state.currentUser.posts : state.posts;
+            const postIndex = postArray.findIndex(post => post.id === postId);
+
+            if (postIndex === -1) return;
+
+            const isLiked = state.userLikes[postId];
+
+            if (isLiked) {
+                postArray[postIndex].likes -= 1;
+                delete state.userLikes[postId];
+            } else {
+                postArray[postIndex].likes += 1;
+                state.userLikes[postId] = true;
+            }
+
+            localStorage.setItem('userLikes', JSON.stringify(state.userLikes));
+            renderPosts();
+        }
+    </script>
+</body>
+</html>
